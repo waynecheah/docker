@@ -1,0 +1,14 @@
+FROM php:8.0.3-fpm-alpine
+
+# Install system dependencies
+RUN apk --no-cache add git \
+  && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
