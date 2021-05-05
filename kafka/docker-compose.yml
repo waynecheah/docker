@@ -1,0 +1,30 @@
+version: '2.4'
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    networks:
+      - my_app_net
+    ports:
+      - "2181:2181"
+  kafka:
+    container_name: kafka
+    image: niks123123/kafka:2.7.0
+    networks:
+      - my_app_net
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: ${HOST_IP}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "topic-test:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  my_app_net:
+    external: true
